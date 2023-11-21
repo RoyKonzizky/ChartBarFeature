@@ -1,10 +1,10 @@
 import {
-    BarElement,
+    BarElement, BubbleDataPoint,
     CategoryScale,
     Chart as ChartJS,
     Legend,
     LinearScale,
-    LineElement,
+    LineElement, Plugin,
     PointElement,
     Title,
     Tooltip,
@@ -34,32 +34,31 @@ function App() {
 
     const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
-    const dataLabels1 = labels.map(() => faker.number.int({ min: -1000, max: 1000 }));
-    const dataLabels2 = labels.map(() => faker.number.int ({ min: -1000, max: 1000 }));
+    const dataLabels1 = labels.map(() => faker.number.int({min: -1000, max: 1000}));
+    const dataLabels2 = labels.map(() => faker.number.int({min: -1000, max: 1000}));
 
     const diffFinder = (tooltipItems) => {
         let difference = 0;
         // const cutBarsTooltipItems = [tooltipItems[0],tooltipItems[1]];
         if (tooltipItems.length > 1) {
-            if(tooltipItems[0].parsed.y > tooltipItems[1].parsed.y){
+            if (tooltipItems[0].parsed.y > tooltipItems[1].parsed.y) {
                 difference = tooltipItems[0].parsed.y - tooltipItems[1].parsed.y;
-            }
-            else{
+            } else {
                 difference = tooltipItems[1].parsed.y - tooltipItems[0].parsed.y;
-             }
+            }
         }
 
         return 'Difference: ' + difference;
     };
-
-    const plugins = [
+    const plugins: Plugin<'line'>[] = [
         {
-            afterDraw: (chart: { tooltip?: any; scales?: any; ctx?: any }) => {
+            id: "id",
+            afterDraw: (chart: { tooltip?: any; scales?: any; ctx?: any; }) => {
                 if (chart.tooltip._active && chart.tooltip._active.length) {
                     // find coordinates of tooltip
                     const activePoint = chart.tooltip._active[0];
-                    const { ctx } = chart;
-                    const { x } = activePoint.element;
+                    const {ctx} = chart;
+                    const {x} = activePoint.element;
                     const topY = chart.scales.y.top;
                     const bottomY = chart.scales.y.bottom;
 
