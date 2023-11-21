@@ -37,33 +37,24 @@ function App() {
     const dataLabels1 = labels.map(() => faker.number.int({ min: -1000, max: 1000 }));
     const dataLabels2 = labels.map(() => faker.number.int ({ min: -1000, max: 1000 }));
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     const diffFinder = (tooltipItems) => {
         let difference = 0;
-        const cutBarsTooltipItems = [tooltipItems[0],tooltipItems[1]];
-        if (cutBarsTooltipItems.length > 1) {
-            if(cutBarsTooltipItems[0].parsed.y > cutBarsTooltipItems[1].parsed.y){
-                difference = cutBarsTooltipItems[0].parsed.y - cutBarsTooltipItems[1].parsed.y;
+        // const cutBarsTooltipItems = [tooltipItems[0],tooltipItems[1]];
+        if (tooltipItems.length > 1) {
+            if(tooltipItems[0].parsed.y > tooltipItems[1].parsed.y){
+                difference = tooltipItems[0].parsed.y - tooltipItems[1].parsed.y;
             }
             else{
-                difference = cutBarsTooltipItems[1].parsed.y - cutBarsTooltipItems[0].parsed.y;
+                difference = tooltipItems[1].parsed.y - tooltipItems[0].parsed.y;
              }
         }
 
         return 'Difference: ' + difference;
     };
 
-    // // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // // @ts-expect-error
-    // const barFilter = (tooltipItems) => {
-    //     return [tooltipItems[0], tooltipItems[1]];
-    // }
-
     const plugins = [
         {
             afterDraw: (chart: { tooltip?: any; scales?: any; ctx?: any }) => {
-                // eslint-disable-next-line no-underscore-dangle
                 if (chart.tooltip._active && chart.tooltip._active.length) {
                     // find coordinates of tooltip
                     const activePoint = chart.tooltip._active[0];
@@ -78,7 +69,7 @@ function App() {
                     ctx.moveTo(x, topY);
                     ctx.lineTo(x, bottomY);
                     ctx.lineWidth = 1;
-                    ctx.strokeStyle = '#1C2128';
+                    ctx.strokeStyle = 'rgb(0,255,0)';
                     ctx.stroke();
                     ctx.restore();
                 }
@@ -105,14 +96,6 @@ function App() {
                 callbacks: {
                     footer: diffFinder,
                 },
-                // content:{
-                //     callbacks: {
-                //         footer: barFilter
-                //     }
-                // },
-                // content:{
-                //     filter:"bar",
-                // },
             },
         },
     };
@@ -134,30 +117,6 @@ function App() {
             },
         ],
     };
-
-    // const barDatasets = labels.map((label, index) => {
-    //     return {
-    //         label: null,
-    //         type: 'bar',
-    //         data: [
-    //             {
-    //                 x: label,
-    //                 y: [dataLabels1[index], dataLabels2[index]],
-    //             },
-    //         ],
-    //         borderColor: 'rgb(0, 255, 0)',
-    //         backgroundColor: 'rgb(0, 255, 0)',
-    //         borderWidth: 0.1,
-    //         barThickness: 0.1,
-    //     };
-    // });
-    //
-    // const updatedDatasets = [...data.datasets, ...barDatasets];
-    //
-    // const updatedData = {
-    //     ...data,
-    //     datasets: updatedDatasets,
-    // };
 
     return (
         <Line style={styleChart} plugins={plugins} options={options} data={data}/>
