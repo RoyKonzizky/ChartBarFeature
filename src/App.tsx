@@ -1,5 +1,5 @@
 import {
-    BarElement, BubbleDataPoint,
+    BarElement,
     CategoryScale,
     Chart as ChartJS,
     Legend,
@@ -39,7 +39,6 @@ function App() {
 
     const diffFinder = (tooltipItems) => {
         let difference = 0;
-        // const cutBarsTooltipItems = [tooltipItems[0],tooltipItems[1]];
         if (tooltipItems.length > 1) {
             if (tooltipItems[0].parsed.y > tooltipItems[1].parsed.y) {
                 difference = tooltipItems[0].parsed.y - tooltipItems[1].parsed.y;
@@ -68,7 +67,7 @@ function App() {
                     ctx.moveTo(x, topY);
                     ctx.lineTo(x, bottomY);
                     ctx.lineWidth = 1;
-                    ctx.strokeStyle = 'rgb(0,255,0)';
+                    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
                     ctx.stroke();
                     ctx.restore();
                 }
@@ -91,7 +90,7 @@ function App() {
             tooltip: {
                 position: 'nearest',
                 mode: 'index',
-                intersect: true,
+                intersect: false,
                 callbacks: {
                     footer: diffFinder,
                 },
