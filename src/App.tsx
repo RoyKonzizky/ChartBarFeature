@@ -1,13 +1,13 @@
 import {
     BarElement,
     CategoryScale,
-    Chart as ChartJS,
+    Chart as ChartJS, ChartOptions,
     Legend,
     LinearScale,
-    LineElement, Plugin,
+    LineElement,
     PointElement,
     Title,
-    Tooltip,
+    Tooltip, TooltipItem,
 } from 'chart.js';
 import {Line} from 'react-chartjs-2';
 import {faker} from '@faker-js/faker';
@@ -37,7 +37,7 @@ function App() {
     const dataLabels1 = labels.map(() => faker.number.int({min: -1000, max: 1000}));
     const dataLabels2 = labels.map(() => faker.number.int({min: -1000, max: 1000}));
 
-    const diffFinder = (tooltipItems) => {
+    const diffFinder = (tooltipItems:TooltipItem<'line'>[]) => {
         let difference = 0;
         if (tooltipItems.length > 1) {
             if (tooltipItems[0].parsed.y > tooltipItems[1].parsed.y) {
@@ -49,34 +49,64 @@ function App() {
 
         return 'Difference: ' + difference;
     };
-    const plugins: Plugin<'line'>[] = [
+
+    interface Tooltip {
+        _active?: {
+            element: {
+                x: number;
+            };
+        }[];
+    }
+
+    interface Scales {
+        y: {
+            top: number;
+            bottom: number;
+        };
+    }
+
+    interface ChartContext {
+        tooltip?: Tooltip;
+        scales?: Scales;
+        ctx?: CanvasRenderingContext2D | null;
+    }
+
+    interface Plugin {
+        id: string;
+        afterDraw: (chart: ChartContext) => void;
+    }
+
+    const plugins: Plugin[] = [
         {
             id: "id",
-            afterDraw: (chart: { tooltip?: any; scales?: any; ctx?: any; }) => {
-                if (chart.tooltip._active && chart.tooltip._active.length) {
-                    // find coordinates of tooltip
+            afterDraw: (chart: ChartContext) => {
+                if (chart.tooltip?._active && chart.tooltip._active.length > 0) {
+                    // Ensure _active is present and has a length
                     const activePoint = chart.tooltip._active[0];
-                    const {ctx} = chart;
-                    const {x} = activePoint.element;
-                    const topY = chart.scales.y.top;
-                    const bottomY = chart.scales.y.bottom;
+                    const { ctx, scales } = chart;
 
-                    // draw vertical line
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(x, topY);
-                    ctx.lineTo(x, bottomY);
-                    ctx.lineWidth = 1;
-                    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-                    ctx.stroke();
-                    ctx.restore();
+                    if (activePoint && ctx && scales?.y) {
+                        const { x } = activePoint.element;
+                        const topY = scales.y.top;
+                        const bottomY = scales.y.bottom;
+
+                        // Draw vertical line
+                        const ctxNotNull = ctx as CanvasRenderingContext2D; // Asserting ctx is not null
+                        ctxNotNull.save();
+                        ctxNotNull.beginPath();
+                        ctxNotNull.moveTo(x, topY);
+                        ctxNotNull.lineTo(x, bottomY);
+                        ctxNotNull.lineWidth = 1;
+                        ctxNotNull.strokeStyle = 'rgba(255,255,255,0.5)';
+                        ctxNotNull.stroke();
+                        ctxNotNull.restore();
+                    }
                 }
             },
         },
     ];
 
-
-    const options = {
+    const options: ChartOptions<'line'> = {
         responsive: true,
         plugins: {
             legend: {
@@ -88,12 +118,12 @@ function App() {
                 text: 'Chart.js Line Chart',
             },
             tooltip: {
-                position: 'nearest',
-                mode: 'index',
                 intersect: false,
                 callbacks: {
                     footer: diffFinder,
                 },
+                mode: 'index',
+                position: 'nearest',
             },
         },
     };
