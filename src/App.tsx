@@ -54,17 +54,12 @@ function App() {
         id:"lineToolTip",
         afterDraw: (chart:Chart) => {
             if (chart.tooltip?.opacity === 1) {
-                const {
-                    ctx
-                } = chart;
-                const {
-                    caretX
-                } = chart.tooltip;
+                const { ctx} = chart;
+                const { caretX} = chart.tooltip;
                 const topY = chart.scales.y.top;
                 const bottomY = chart.scales.y.bottom;
 
                 ctx.save();
-                ctx.setLineDash([3, 3]);
                 ctx.beginPath();
                 ctx.moveTo(caretX, topY - 5);
                 ctx.lineTo(caretX, bottomY);
