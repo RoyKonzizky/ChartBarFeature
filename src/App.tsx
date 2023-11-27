@@ -50,57 +50,28 @@ function App() {
         return 'Difference: ' + difference;
     };
 
-    interface Tooltip {
-        _active?: {
-            element: {
-                x: number;
-            };
-        }[];
-    }
-
-    interface Scales {
-        y: {
-            top: number;
-            bottom: number;
-        };
-    }
-
-    interface ChartContext {
-        tooltip?: Tooltip;
-        scales?: Scales;
-        ctx?: CanvasRenderingContext2D | null;
-    }
-
-    interface Plugin {
-        id: string;
-        afterDraw: (chart: ChartContext) => void;
-    }
-
-    const plugins: Plugin[] = [
+    const plugins = [
         {
-            id: "id",
-            afterDraw: (chart: ChartContext) => {
-                if (chart.tooltip?._active && chart.tooltip._active.length > 0) {
-                    // Ensure _active is present and has a length
+            id:"line",
+            afterDraw: (chart: { tooltip?: any; scales?: any; ctx?: any }) => {
+                // eslint-disable-next-line no-underscore-dangle
+                if (chart.tooltip._active && chart.tooltip._active.length) {
+                    // find coordinates of tooltip
                     const activePoint = chart.tooltip._active[0];
-                    const { ctx, scales } = chart;
+                    const { ctx } = chart;
+                    const { x } = activePoint.element;
+                    const topY = chart.scales.y.top;
+                    const bottomY = chart.scales.y.bottom;
 
-                    if (activePoint && ctx && scales?.y) {
-                        const { x } = activePoint.element;
-                        const topY = scales.y.top;
-                        const bottomY = scales.y.bottom;
-
-                        // Draw vertical line
-                        const ctxNotNull = ctx as CanvasRenderingContext2D; // Asserting ctx is not null
-                        ctxNotNull.save();
-                        ctxNotNull.beginPath();
-                        ctxNotNull.moveTo(x, topY);
-                        ctxNotNull.lineTo(x, bottomY);
-                        ctxNotNull.lineWidth = 1;
-                        ctxNotNull.strokeStyle = 'rgba(255,255,255,0.5)';
-                        ctxNotNull.stroke();
-                        ctxNotNull.restore();
-                    }
+                    // draw vertical line
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(x, topY);
+                    ctx.lineTo(x, bottomY);
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                    ctx.stroke();
+                    ctx.restore();
                 }
             },
         },
