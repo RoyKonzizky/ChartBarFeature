@@ -53,7 +53,7 @@ function App() {
     const plugins= [{
         id:"lineToolTip",
         afterDraw: (chart:Chart) => {
-            if (chart.tooltip?.opacity === 1) {
+            if (chart.tooltip && chart.tooltip.opacity === 1) {
                 const { ctx} = chart;
                 const { caretX} = chart.tooltip;
                 const topY = chart.scales.y.top;
@@ -61,7 +61,7 @@ function App() {
 
                 ctx.save();
                 ctx.beginPath();
-                ctx.moveTo(caretX, topY - 5);
+                ctx.moveTo(caretX, topY);
                 ctx.lineTo(caretX, bottomY);
                 ctx.lineWidth = 1;
                 ctx.strokeStyle = `rgba(255,255,255,0.5)`;
