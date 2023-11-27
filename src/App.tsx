@@ -1,6 +1,6 @@
 import {
     BarElement,
-    CategoryScale,
+    CategoryScale, Chart,
     Chart as ChartJS, ChartOptions,
     Legend,
     LinearScale,
@@ -50,32 +50,32 @@ function App() {
         return 'Difference: ' + difference;
     };
 
-    const plugins = [
-        {
-            id:"line",
-            afterDraw: (chart: { tooltip?: any; scales?: any; ctx?: any }) => {
-                // eslint-disable-next-line no-underscore-dangle
-                if (chart.tooltip._active && chart.tooltip._active.length) {
-                    // find coordinates of tooltip
-                    const activePoint = chart.tooltip._active[0];
-                    const { ctx } = chart;
-                    const { x } = activePoint.element;
-                    const topY = chart.scales.y.top;
-                    const bottomY = chart.scales.y.bottom;
+    const plugins= [{
+        id:"lineToolTip",
+        afterDraw: (chart:Chart) => {
+            if (chart.tooltip?.opacity === 1) {
+                const {
+                    ctx
+                } = chart;
+                const {
+                    caretX
+                } = chart.tooltip;
+                const topY = chart.scales.y.top;
+                const bottomY = chart.scales.y.bottom;
 
-                    // draw vertical line
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(x, topY);
-                    ctx.lineTo(x, bottomY);
-                    ctx.lineWidth = 1;
-                    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-                    ctx.stroke();
-                    ctx.restore();
-                }
-            },
-        },
-    ];
+                ctx.save();
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(caretX, topY - 5);
+                ctx.lineTo(caretX, bottomY);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = `rgba(255,255,255,0.5)`;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+    }];
+
 
     const options: ChartOptions<'line'> = {
         responsive: true,
