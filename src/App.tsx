@@ -50,23 +50,28 @@ function App() {
         return 'Difference: ' + difference;
     };
 
-    const plugins= [{
-        id:"lineToolTip",
+    const plugins = [{
+        id: "lineToolTip",
         afterDraw: (chart:Chart) => {
             if (chart.tooltip && chart.tooltip.opacity === 1) {
-                const { ctx} = chart;
-                const { caretX} = chart.tooltip;
-                const topY = chart.scales.y.top;
-                const bottomY = chart.scales.y.bottom;
+                const { ctx } = chart;
+                const tooltipItems = chart.tooltip.dataPoints as TooltipItem<'line'>[];
 
-                ctx.save();
-                ctx.beginPath();
-                ctx.moveTo(caretX, topY);
-                ctx.lineTo(caretX, bottomY);
-                ctx.lineWidth = 1;
-                ctx.strokeStyle = `rgba(255,255,255,0.5)`;
-                ctx.stroke();
-                ctx.restore();
+                if (tooltipItems && tooltipItems.length >= 2) {
+                    const startX = tooltipItems[0].element.x;
+                    const startY = tooltipItems[0].element.y;
+                    const endX = tooltipItems[1].element.x;
+                    const endY = tooltipItems[1].element.y;
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(endX, endY);
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = `rgba(255, 255, 255, 0.5)`;
+                    ctx.stroke();
+                    ctx.restore();
+                }
             }
         }
     }];
