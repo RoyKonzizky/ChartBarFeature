@@ -1,4 +1,3 @@
-
 import {
     Chart as ChartJS,
     LinearScale,
@@ -9,8 +8,10 @@ import {
 } from 'chart.js';
 import { Scatter } from 'react-chartjs-2';
 import {faker} from '@faker-js/faker';
+import 'chartjs-plugin-zoom';
+import zoomPlugin from 'chartjs-plugin-zoom';
 
-ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
+ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend, zoomPlugin);
 
 const styleChart = {
     width: '90vw',
@@ -26,6 +27,17 @@ export const options = {
     plugins:{
         tooltip: {
             intersect: false,
+        },
+        zoom: {
+            zoom: {
+                wheel: {
+                    enabled: true,
+                },
+                pinch: {
+                    enabled: true
+                },
+                mode: 'x',
+            }
         },
     },
 };

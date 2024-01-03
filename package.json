@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "chart.js": "^4.4.0",
+    "chartjs": "^0.3.24",
     "chartjs-plugin-annotation": "^3.0.1",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "chartjs-plugin-zoom": "^2.0.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0"
